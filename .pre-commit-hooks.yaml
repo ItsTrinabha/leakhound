@@ -1,0 +1,7 @@
+- id: leakhound
+  name: leakhound (staged secrets)
+  description: Block commits that add secrets.
+  entry: leakhound git --staged --no-color
+  language: python
+  pass_filenames: false
+  always_run: true

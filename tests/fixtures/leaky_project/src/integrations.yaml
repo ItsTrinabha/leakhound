@@ -1,0 +1,7 @@
+# DELIBERATELY LEAKY TEST FIXTURE - values are fake.
+huggingface: {{HF_TOKEN}}
+digitalocean: {{DO_TOKEN}}
+vault: {{VAULT_TOKEN}}
+telegram_bot: "{{TELEGRAM_TOKEN}}"
+azure_storage: "DefaultEndpointsProtocol=https;AccountName=acmeprod;AccountKey={{AZURE_ACCOUNT_KEY}};EndpointSuffix=core.windows.net"
+webhook_hmac: "{{HMAC_HEX}}"

@@ -1,0 +1,8 @@
+# DELIBERATELY LEAKY TEST FIXTURE - values are fake.
+env:
+  NODE_ENV: production
+  NPM_TOKEN: {{NPM_TOKEN}}
+  GITLAB_TOKEN: "{{GITLAB_TOKEN}}"
+  GH_FINE_GRAINED: {{GITHUB_FINE_GRAINED}}
+notify:
+  slack: {{SLACK_WEBHOOK}}

@@ -1,0 +1,9 @@
+database:
+  host: db.internal
+  user: app
+  password: ${DB_PASSWORD}
+secret_name: my-app-secret
+api_key: <your-api-key-here>
+auth_token: "{{ vault_auth_token }}"
+logo: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+image_digest: "sha256:3a7bd3e2360a3d29eea436fcfb7e44c735d117c42d1c1835420b6b9942dd4f1b"
