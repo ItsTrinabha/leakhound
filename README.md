@@ -42,15 +42,50 @@ Both of those secrets were "deleted" in later commits. `leakhound scan` on the c
 | **Zero dependencies** | pure Python standard library (3.11+); runs anywhere git and Python do |
 | **Extensible** | add custom rules, allowlists and thresholds in `.leakhound.toml` |
 
-## Installation
+## Getting started
+
+**Requirements:** Python 3.11+ ([python.org](https://www.python.org/downloads/); on Windows tick *"Add Python to PATH"* during setup) and Git ([git-scm.com](https://git-scm.com/)) for history scans.
+
+**1. Open a terminal in the project folder** (the one containing `pyproject.toml`).
+Windows: open the folder in Explorer, type `powershell` in the address bar and press Enter.
+macOS / Linux: `cd path/to/leakhound`.
+
+**2. Install:**
 
 ```bash
-pip install .            # from a checkout
-# or, for development
-pip install -e ".[dev]"
+pip install .            # normal install
+pip install -e ".[dev]"  # development install (editable, includes pytest)
 ```
 
-This installs the `leakhound` command. You can also run it without installing via `python -m leakhound`.
+**3. Try the demo.** This builds a practice git repo with fake secrets buried in old commits:
+
+```bash
+python scripts/make_demo_repo.py demo
+python -m leakhound scan demo    # current files: nothing found, the secrets were "deleted"
+python -m leakhound git demo     # full history: finds all 4 and the commit that added each
+```
+
+**4. Scan your own code:**
+
+```bash
+python -m leakhound scan path/to/your/project
+python -m leakhound git  path/to/your/project
+```
+
+> **`python -m leakhound` vs `leakhound`:** both run the same tool. `pip install` also creates a `leakhound` command, but on Windows the folder it lands in is often not on your PATH. Then PowerShell says *"The term 'leakhound' is not recognized"*. `python -m leakhound` always works, so the examples above use it. To use the short form, run `pip show -f leakhound` and add the `...\Scripts` folder it lists to your PATH. Then reopen the terminal. On Windows, if `python` opens the Microsoft Store, use `py` instead (`py -m leakhound ...`).
+
+The rest of this README writes the short `leakhound` form; substitute `python -m leakhound` if needed.
+
+**Troubleshooting**
+
+| Symptom | Fix |
+|---|---|
+| `'leakhound' is not recognized` | Use `python -m leakhound ...`, or add Python's `Scripts` folder to PATH (see above) |
+| `'python' is not recognized` / opens the Store | Reinstall Python with *"Add Python to PATH"* ticked, or use `py` instead of `python` |
+| `No module named leakhound` | Run the command from the project folder, or run `pip install .` first |
+| `not a git repository` (exit code 2) | `leakhound git` needs a folder that is a git repo; use `leakhound scan` for plain folders |
+| `git executable not found` | Install Git and reopen the terminal |
+| Colours look like `←[31m` garbage (very old Windows consoles) | Add `--no-color` (or set the `NO_COLOR` environment variable) |
 
 ## Quick start
 
@@ -281,7 +316,8 @@ scripts/         make_demo_repo.py builds a repo with secrets buried in history
 ```bash
 pip install -e ".[dev]"
 pytest                                   # 124 tests, ~1.5 s
-python scripts/make_demo_repo.py /tmp/demo && leakhound git /tmp/demo
+python scripts/make_demo_repo.py demo
+python -m leakhound git demo
 ```
 
 **About the test fixtures.** `tests/fixtures/leaky_project` contains 25 planted secrets across `.py`, `.js`, `.env`, YAML and a bare key file. They are written as `{{PLACEHOLDERS}}` that `tests/fakes.py` fills with deterministic, randomly generated fakes at test time. No credential-shaped string is ever committed, so the repository passes its own scan, which is itself a test, and never trips push protection. The end-to-end test asserts that every planted secret is found exactly once, with the right rule, file and line. `tests/fixtures/clean_project` is full of near-misses (env lookups, placeholders, UUIDs, commit SHAs, lock-file hashes, data URIs, binaries) and must produce zero findings. A set of pathological inputs guards every rule against catastrophic regex backtracking (ReDoS).
